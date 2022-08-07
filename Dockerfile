@@ -12,6 +12,7 @@ RUN apt-get update \
     python3.8 \
     python3.8-dev \
     python3-distutils \
+    vim \
  && rm -rf /var/lib/apt/lists/*
 
 # Python3.8
@@ -22,4 +23,14 @@ RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py \
 RUN ln -s /usr/bin/python3.8 /usr/local/bin/python
 RUN ln -s /usr/bin/python3.8 /usr/local/bin/python3
 
+# Django
+WORKDIR /crud
+COPY crud .
+ENV DJANGO_SETTINGS_MODULE="crud.settings"
+ENV PYTHONPATH="$PYTHONPATH:/crud"
+RUN pip install --no-cache-dir --upgrade --requirement requirements.txt
+
+# Entrypoint
 WORKDIR /
+COPY entrypoint.sh /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
