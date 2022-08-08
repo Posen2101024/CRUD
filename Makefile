@@ -30,7 +30,7 @@ build: kill
 	docker build --no-cache -t $(REPOSITORY):$(VERSION) .
 
 run:
-	docker run -itd --name $(CONTAINER) $(REPOSITORY):$(VERSION) /bin/bash
+	docker run -p 8000:8000 -itd --name $(CONTAINER) $(REPOSITORY):$(VERSION)
 
 exec:
 	docker exec -it $(CONTAINER) /bin/bash
