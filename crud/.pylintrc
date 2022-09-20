@@ -1,0 +1,8 @@
+[MESSAGES CONTROL]
+disable=C0114,C0115,C0116
+good-names=f
+
+[MASTER]
+ignore=migrations,manage.py
+load-plugins=pylint_django
+django-settings-module=crud.settings

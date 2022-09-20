@@ -35,3 +35,8 @@ COPY crud .
 ENV DJANGO_SETTINGS_MODULE="crud.settings"
 ENV PYTHONPATH="$PYTHONPATH:/crud"
 RUN pip install --no-cache-dir --upgrade --requirement requirements.txt
+
+# File station
+ENV FILES_BASE_DIR="/files"
+WORKDIR $FILES_BASE_DIR
+RUN chown -R www-data:www-data $FILES_BASE_DIR
