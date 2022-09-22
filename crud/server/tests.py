@@ -1,9 +1,12 @@
-from django.test import Client, TestCase
 from django.urls import reverse
+from rest_framework.test import APIClient, APITestCase
 
 
-class PingTests(TestCase):
+class PingTests(APITestCase):
+    def setUp(self):
+        super().setUp()
+        self.client = APIClient()
+
     def test_ping_pong(self):
-        client = Client()
-        response = client.get(reverse('server:ping'))
+        response = self.client.get(reverse('server:ping'))
         self.assertEqual(200, response.status_code)
