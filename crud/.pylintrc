@@ -1,8 +1,13 @@
-[MESSAGES CONTROL]
-disable=C0114,C0115,C0116,E1101,W0223
-good-names=fp
-
 [MASTER]
 ignore=migrations,manage.py
 load-plugins=pylint_django
 django-settings-module=crud.settings
+
+[MESSAGES CONTROL]
+disable=C0114,C0115,C0116,E1101,W0223
+
+[BASIC]
+good-names=fp
+
+[FORMAT]
+max-line-length=120
