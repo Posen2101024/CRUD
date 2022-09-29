@@ -229,3 +229,55 @@ class DeleteFileTests(APITestCase):
         mock_remove.assert_not_called()
         mock_rmdir.assert_called_once_with(abs_path)
         self.assertEqual(response.status_code, status.HTTP_409_CONFLICT)
+
+
+class PatchFileTests(APITestCase):
+    def setUp(self):
+        super().setUp()
+        self.client = APIClient()
+
+    @patch.object(os.path, 'isfile', return_value=True)
+    def test_patch_exist_file_200(self, mock_isfile):
+        kwargs = {'path': 'tmp/file.out'}
+        request_url = reverse('file_station:file', kwargs=kwargs)
+        abs_file_path = os.path.join(BASE_DIR, kwargs['path'])
+        with open(FILE_PATH, 'rb') as fp:
+            data = {'file': fp}
+            with patch('builtins.open', new_callable=mock_open, read_data='mewmewmewdata') as mock_builtins_open:
+                response = self.client.patch(request_url, data, fmt='multipart')
+                mock_builtins_open.assert_called_once_with(abs_file_path, 'wb')
+                fp.seek(0)
+                mock_builtins_open().write.assert_called_once_with(fp.read())
+        mock_isfile.assert_called_once_with(abs_file_path)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @patch.object(os.path, 'isfile', return_value=True)
+    def test_patch_exist_file_path_only_400(self, mock_isfile):
+        kwargs = {'path': 'tmp/file.out'}
+        request_url = reverse('file_station:file', kwargs=kwargs)
+        abs_file_path = os.path.join(BASE_DIR, kwargs['path'])
+        response = self.client.patch(request_url)
+        mock_isfile.assert_called_once_with(abs_file_path)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    @patch.object(os.path, 'isfile', return_value=False)
+    def test_patch_non_exist_file_404(self, mock_isfile):
+        kwargs = {'path': 'mew/file.out'}
+        request_url = reverse('file_station:file', kwargs=kwargs)
+        abs_file_path = os.path.join(BASE_DIR, kwargs['path'])
+        with open(FILE_PATH, 'rb') as fp:
+            data = {'file': fp}
+            with patch('builtins.open', new_callable=mock_open, read_data='mewmewmewdata') as mock_builtins_open:
+                response = self.client.patch(request_url, data, fmt='multipart')
+                mock_builtins_open.assert_not_called()
+        mock_isfile.assert_called_once_with(abs_file_path)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @patch.object(os.path, 'isfile', return_value=False)
+    def test_patch_non_exist_file_path_only_404(self, mock_isfile):
+        kwargs = {'path': 'mew/file.out'}
+        request_url = reverse('file_station:file', kwargs=kwargs)
+        abs_file_path = os.path.join(BASE_DIR, kwargs['path'])
+        response = self.client.patch(request_url)
+        mock_isfile.assert_called_once_with(abs_file_path)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

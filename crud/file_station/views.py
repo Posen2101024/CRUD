@@ -60,3 +60,14 @@ class File(APIView):
                 return Response(status=status.HTTP_409_CONFLICT)
             return Response(status=status.HTTP_200_OK)
         return Response(status=status.HTTP_404_NOT_FOUND)
+
+    def patch(self, request, path):
+        abs_file_path = os.path.join(BASE_DIR, path)
+        if not os.path.isfile(abs_file_path):
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        if not 'file' in request.data:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        file = request.data['file']
+        with open(abs_file_path, 'wb') as fp:
+            fp.write(file.read())
+        return Response(status=status.HTTP_200_OK)
