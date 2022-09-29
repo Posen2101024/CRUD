@@ -44,3 +44,19 @@ class File(APIView):
             return Response(status=status.HTTP_409_CONFLICT)
         os.makedirs(abs_dir_path)
         return Response(status=status.HTTP_201_CREATED)
+
+    def delete(self, request, path):
+        abs_path = os.path.join(BASE_DIR, path)
+        if os.path.isfile(abs_path):
+            try:
+                os.remove(abs_path)
+            except OSError:
+                return Response(status=status.HTTP_409_CONFLICT)
+            return Response(status=status.HTTP_200_OK)
+        if os.path.isdir(abs_path):
+            try:
+                os.rmdir(abs_path)
+            except OSError:
+                return Response(status=status.HTTP_409_CONFLICT)
+            return Response(status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_404_NOT_FOUND)

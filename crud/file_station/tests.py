@@ -156,3 +156,76 @@ class PostFileTests(APITestCase):
         mock_makedirs.assert_called_once_with(abs_dir_path, exist_ok=True)
         mock_exists.assert_called_once_with(abs_file_path)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+
+class DeleteFileTests(APITestCase):
+    def setUp(self):
+        super().setUp()
+        self.client = APIClient()
+
+    @patch.object(os, 'rmdir')
+    @patch.object(os, 'remove')
+    @patch.object(os.path, 'isdir', return_value=True)
+    @patch.object(os.path, 'isfile', return_value=False)
+    def test_delete_exist_dir_200(self, mock_isfile, mock_isdir, mock_remove, mock_rmdir):
+        kwargs = {'path': 'tmp/dir/'}
+        request_url = reverse('file_station:file', kwargs=kwargs)
+        response = self.client.delete(request_url)
+        abs_path = os.path.join(BASE_DIR, kwargs['path'])
+        mock_isfile.assert_called_once_with(abs_path)
+        mock_isdir.assert_called_once_with(abs_path)
+        mock_remove.assert_not_called()
+        mock_rmdir.assert_called_once_with(abs_path)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @patch.object(os, 'rmdir')
+    @patch.object(os, 'remove')
+    @patch.object(os.path, 'isdir', return_value=False)
+    @patch.object(os.path, 'isfile', return_value=True)
+    def test_delete_exist_file_200(self, mock_isfile, mock_isdir, mock_remove, mock_rmdir):
+        kwargs = {'path': 'tmp/file.out'}
+        request_url = reverse('file_station:file', kwargs=kwargs)
+        response = self.client.delete(request_url)
+        abs_path = os.path.join(BASE_DIR, kwargs['path'])
+        mock_isfile.assert_called_once_with(abs_path)
+        mock_isdir.assert_not_called()
+        mock_remove.assert_called_once_with(abs_path)
+        mock_rmdir.assert_not_called()
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @patch.object(os.path, 'isdir', return_value=False)
+    @patch.object(os.path, 'isfile', return_value=False)
+    def test_delete_non_exist_dir_404(self, mock_isfile, mock_isdir):
+        kwargs = {'path': 'mew/dir/'}
+        request_url = reverse('file_station:file', kwargs=kwargs)
+        response = self.client.delete(request_url)
+        abs_path = os.path.join(BASE_DIR, kwargs['path'])
+        mock_isfile.assert_called_once_with(abs_path)
+        mock_isdir.assert_called_once_with(abs_path)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @patch.object(os.path, 'isdir', return_value=False)
+    @patch.object(os.path, 'isfile', return_value=False)
+    def test_delete_non_exist_file_404(self, mock_isfile, mock_isdir):
+        kwargs = {'path': 'mew/file.out'}
+        request_url = reverse('file_station:file', kwargs=kwargs)
+        response = self.client.delete(request_url)
+        abs_path = os.path.join(BASE_DIR, kwargs['path'])
+        mock_isfile.assert_called_once_with(abs_path)
+        mock_isdir.assert_called_once_with(abs_path)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @patch.object(os, 'rmdir', side_effect=OSError)
+    @patch.object(os, 'remove')
+    @patch.object(os.path, 'isdir', return_value=True)
+    @patch.object(os.path, 'isfile', return_value=False)
+    def test_delete_non_empty_dir_409(self, mock_isfile, mock_isdir, mock_remove, mock_rmdir):
+        kwargs = {'path': 'tmp/dir/'}
+        request_url = reverse('file_station:file', kwargs=kwargs)
+        response = self.client.delete(request_url)
+        abs_path = os.path.join(BASE_DIR, kwargs['path'])
+        mock_isfile.assert_called_once_with(abs_path)
+        mock_isdir.assert_called_once_with(abs_path)
+        mock_remove.assert_not_called()
+        mock_rmdir.assert_called_once_with(abs_path)
+        self.assertEqual(response.status_code, status.HTTP_409_CONFLICT)
