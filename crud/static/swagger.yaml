@@ -1,0 +1,147 @@
+openapi: 3.0.0
+servers:
+  - description: 'Development Server'
+    url: 'http://127.0.0.1:8000/'
+info:
+  description: ''
+  version: ''
+  title: 'CRUD with Upload File'
+tags:
+  - name: Server
+  - name: File Station
+paths:
+  /server/ping:
+    get:
+      summary: 'Testing whether a connection is still alive.'
+      description: ''
+      tags:
+        - Server
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: string
+                enum:
+                  - 'pong'
+                example: 'pong'
+  /file/{PATH}:
+    get:
+      summary: ''
+      description: ''
+      tags:
+        - File Station
+      parameters:
+        - $ref: '#/components/parameters/PATH'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      isdir:
+                        type: boolean
+                        enum:
+                          - False
+                        example: False
+                      contents:
+                        type: string
+                        example: 'mewmewdata'
+                    required:
+                      - isdir
+                      - contents
+                  - type: object
+                    properties:
+                      isdir:
+                        type: boolean
+                        enum:
+                          - True
+                        example: True
+                      files:
+                        type: array
+                        items:
+                          type: string
+                    required:
+                      - isdir
+                      - files
+        '404':
+          description: ''
+    post:
+      summary: ''
+      description: ''
+      tags:
+        - File Station
+      parameters:
+        - $ref: '#/components/parameters/PATH'
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '201':
+          description: ''
+        '409':
+          description: ''
+    delete:
+      summary: ''
+      description: ''
+      tags:
+        - File Station
+      parameters:
+        - $ref: '#/components/parameters/PATH'
+      responses:
+        '200':
+          description: ''
+        '404':
+          description: ''
+        '409':
+          description: ''
+    patch:
+      summary: ''
+      description: ''
+      tags:
+        - File Station
+      parameters:
+        - $ref: '#/components/parameters/PATH'
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+              required:
+                - file
+      responses:
+        '200':
+          description: ''
+        '400':
+          description: ''
+        '404':
+          description: ''
+components:
+  parameters:
+    PATH:
+      description: |
+        Local system file path.
+
+        examples:
+          - root/dir
+          - root/dir/file.out
+      name: PATH
+      in: path
+      schema:
+        type: string
+        example: 'root'
+      required: true

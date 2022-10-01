@@ -15,9 +15,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
+from django.views.generic import TemplateView
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('file/', include('file_station.urls', namespace='file_station')),
     path('server/', include('server.urls', namespace='server')),
+    path('swagger-ui/', TemplateView.as_view(template_name='swagger-ui.html',
+                                             extra_context={'schema_file':'swagger.yaml'}),
+                                             name='swagger-ui'),
 ]
