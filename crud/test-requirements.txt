@@ -1,0 +1,7 @@
+pylint
+pylint-django
+pytest
+pytest-cov
+pytest-django
+pytest-pylint
+pytest-testdox

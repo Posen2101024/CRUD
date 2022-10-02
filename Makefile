@@ -32,6 +32,11 @@ build: kill
 run:
 	docker run -p 8000:8000 -itd --name $(CONTAINER) $(REPOSITORY):$(VERSION)
 
+unit-test:
+	docker exec -it $(CONTAINER) /bin/bash -c "cd /crud && pip install --no-cache-dir --upgrade --requirement test-requirements.txt"
+	docker exec -it $(CONTAINER) /bin/bash -c "cd /crud && pytest --pylint --pylint-rcfile=.pylintrc -m pylint"
+	docker exec -it $(CONTAINER) /bin/bash -c "cd /crud && pytest --testdox --force-testdox --cov /crud"
+
 exec:
 	docker exec -it $(CONTAINER) /bin/bash
 
