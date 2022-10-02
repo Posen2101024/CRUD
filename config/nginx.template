@@ -1,0 +1,30 @@
+upstream uwsgi {
+    server 127.0.0.1:8001;
+}
+
+server {
+    listen 0.0.0.0:80;
+    server_name 127.0.0.1 localhost;
+    server_tokens off;
+
+    location / {
+        uwsgi_pass uwsgi;
+        include uwsgi_params;
+
+        # kill cache
+        add_header Last-Modified $date_gmt;
+        add_header Cache-Control 'private no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0';
+        if_modified_since off;
+        expires off;
+        etag off;
+    }
+
+    location /static/ {
+        root /;
+        try_files $uri @crud;
+    }
+
+    location @crud {
+        root /crud;
+    }
+}

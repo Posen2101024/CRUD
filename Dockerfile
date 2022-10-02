@@ -9,6 +9,7 @@ RUN apt-get update \
  && apt-get upgrade -y \
     build-essential \
     curl \
+    nginx \
     python3.8 \
     python3.8-dev \
     python3-distutils \
@@ -24,10 +25,6 @@ RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py \
  && rm get-pip.py
 RUN ln -s /usr/bin/python3.8 /usr/local/bin/python
 RUN ln -s /usr/bin/python3.8 /usr/local/bin/python3
-
-# Entrypoint
-WORKDIR /usr/local/bin
-COPY entrypoint.sh .
 
 # Django
 WORKDIR /crud
@@ -45,6 +42,15 @@ RUN chown -R www-data:www-data $FILES_BASE_DIR
 ENV UWSGI_LOG="/var/log/uwsgi"
 RUN mkdir -p $UWSGI_LOG
 RUN chown -R www-data:www-data $UWSGI_LOG
+
+# Nginx
+COPY config/nginx.conf /etc/nginx/nginx.conf
+COPY config/nginx.template /etc/nginx/conf.d/nginx.conf
+RUN nginx -t
+
+# Entrypoint
+WORKDIR /usr/local/bin
+COPY entrypoint.sh .
 
 WORKDIR $FILES_BASE_DIR
 ENTRYPOINT ["entrypoint.sh"]

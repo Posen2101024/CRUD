@@ -6,4 +6,6 @@ echo SECRET_KEY=\"$(tr -dc 'A-Za-z0-9!#%&()*+,-./:;<=>?@[\]^_{|}~' </dev/urandom
 django-admin collectstatic
 django-admin migrate
 
+service nginx start
+
 uwsgi --ini /crud/uwsgi.ini

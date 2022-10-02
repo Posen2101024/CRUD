@@ -30,7 +30,7 @@ build: kill
 	docker build --no-cache -t $(REPOSITORY):$(VERSION) .
 
 run:
-	docker run -p 8001:8001 -itd --name $(CONTAINER) $(REPOSITORY):$(VERSION)
+	docker run -p 8080:80 -itd --name $(CONTAINER) $(REPOSITORY):$(VERSION)
 
 unit-test:
 	docker exec -it $(CONTAINER) /bin/bash -c "cd /crud && pip install --no-cache-dir --upgrade --requirement test-requirements.txt"
