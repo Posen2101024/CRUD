@@ -37,6 +37,11 @@ unit-test:
 	docker exec -it $(CONTAINER) /bin/bash -c "cd /crud && pytest --pylint --pylint-rcfile=.pylintrc -m pylint"
 	docker exec -it $(CONTAINER) /bin/bash -c "cd /crud && pytest --testdox --force-testdox --cov /crud"
 
+functional-test:
+	docker exec -it $(CONTAINER) /bin/bash -c "cd /test && pip install --no-cache-dir --upgrade --requirement test-requirements.txt"
+	docker exec -it $(CONTAINER) /bin/bash -c "cd /test && pytest --pylint --pylint-rcfile=.pylintrc -m pylint"
+	docker exec -it $(CONTAINER) /bin/bash -c "cd /test && pytest --testdox --force-testdox --cov /test"
+
 exec:
 	docker exec -it $(CONTAINER) /bin/bash
 
