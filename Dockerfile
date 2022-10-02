@@ -13,6 +13,7 @@ RUN apt-get update \
     python3.8-dev \
     python3-distutils \
     tzdata \
+    uwsgi-plugin-python3 \
     vim \
  && rm -rf /var/lib/apt/lists/*
 
@@ -27,7 +28,6 @@ RUN ln -s /usr/bin/python3.8 /usr/local/bin/python3
 # Entrypoint
 WORKDIR /usr/local/bin
 COPY entrypoint.sh .
-ENTRYPOINT ["entrypoint.sh"]
 
 # Django
 WORKDIR /crud
@@ -38,5 +38,13 @@ RUN pip install --no-cache-dir --upgrade --requirement requirements.txt
 
 # File station
 ENV FILES_BASE_DIR="/files"
-WORKDIR $FILES_BASE_DIR
+RUN mkdir -p $FILES_BASE_DIR
 RUN chown -R www-data:www-data $FILES_BASE_DIR
+
+# uWSGI
+ENV UWSGI_LOG="/var/log/uwsgi"
+RUN mkdir -p $UWSGI_LOG
+RUN chown -R www-data:www-data $UWSGI_LOG
+
+WORKDIR $FILES_BASE_DIR
+ENTRYPOINT ["entrypoint.sh"]

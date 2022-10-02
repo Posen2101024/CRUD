@@ -1,7 +1,7 @@
 openapi: 3.0.0
 servers:
   - description: 'Development Server'
-    url: 'http://127.0.0.1:8000/'
+    url: 'http://127.0.0.1:8001/'
 info:
   description: ''
   version: ''

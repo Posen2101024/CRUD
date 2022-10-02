@@ -2,11 +2,11 @@
 
 ### Quick Start
 
-```bash
+```
 make build run
-curl http://127.0.0.1:8000/server/ping
+curl http://127.0.0.1:8001/server/ping
 ```
 
 ### Swagger
 
-http://127.0.0.1:8000/swagger-ui
+http://127.0.0.1:8001/swagger-ui
