@@ -4,9 +4,9 @@
 
 ```
 make build run
-curl http://127.0.0.1:8080/server/ping
+curl -k https://127.0.0.1:8443/server/ping
 ```
 
 ### Swagger
 
-http://127.0.0.1:8080/swagger-ui
+https://127.0.0.1:8443/swagger-ui

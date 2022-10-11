@@ -18,6 +18,6 @@ class API:
         self._url = value
 
     def get(self, request_uri, status_code=200):
-        response = requests.get(f'{self.url}/{request_uri}', timeout=(CONN_TIMEOUT, READ_TIMEOUT))
+        response = requests.get(f'{self.url}/{request_uri}', timeout=(CONN_TIMEOUT, READ_TIMEOUT), verify=False)
         assert response.status_code == status_code
         return response.json()

@@ -10,6 +10,7 @@ RUN apt-get update \
     build-essential \
     curl \
     nginx \
+    openssl \
     python3.8 \
     python3.8-dev \
     python3-distutils \
@@ -46,9 +47,7 @@ RUN mkdir -p $UWSGI_LOG
 RUN chown -R www-data:www-data $UWSGI_LOG
 
 # Nginx
-COPY config/nginx.conf /etc/nginx/nginx.conf
-COPY config/nginx.template /etc/nginx/conf.d/nginx.conf
-RUN nginx -t
+COPY config/nginx.conf.template /etc/nginx/conf.d/nginx.conf
 
 # Entrypoint
 WORKDIR /usr/local/bin

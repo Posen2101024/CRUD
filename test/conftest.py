@@ -3,7 +3,7 @@ from utils.api import API
 
 
 def pytest_addoption(parser):
-    parser.addoption('--host', default='http://127.0.0.1')
+    parser.addoption('--host', default='https://127.0.0.1')
     parser.addoption('--port', default=None)
 
 
